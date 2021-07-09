@@ -1,0 +1,15 @@
+#!/bin/sh
+# See how we were called.
+case "$1" in
+  start)
+        # Start daemons.
+        echo -n "Starting named: "
+        daemon /usr/sbin/named -c /etc/named.conf
+        echo
+        ;;
+  *)
+        echo "Usage: named start"
+        exit 1
+esac
+
+exit 0

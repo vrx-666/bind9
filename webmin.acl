@@ -1,0 +1,1 @@
+admin: acl bind8 bsdexports bsdfdisk dfsadmin format hpuxexports ipfilter ipfw nis package-updates proc rbac sendmail servers sgiexports smf status system-status time webmin webmincron webminlog zones

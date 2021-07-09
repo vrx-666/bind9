@@ -1,0 +1,12 @@
+#!/bin/sh
+if [ ! -f /etc/bind/rndc.key ];then
+	cp -R -p /data/bind/* /etc/bind/.
+	chown root:named /etc/bind
+fi
+/usr/bin/perl /opt/webmin/miniserv.pl /etc/webmin/miniserv.conf
+if [ $? != 0 ];then
+	pkill perl
+	rm /var/run/webmin/miniserv.pid
+	/usr/bin/perl /opt/webmin/miniserv.pl /etc/webmin/miniserv.conf
+fi
+/usr/bin/supervisord -n -c /etc/supervisord.conf
