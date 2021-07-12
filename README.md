@@ -29,4 +29,10 @@ For simpler use, You can do:
 ```
     network_mode: host
 ```
-instead "ports" directive
+instead "ports" directive<br>
+<br>
+ENV Vars could be used:
+```
+GUI_USER - to run with different username to Webmin Panel (default: admin)
+ENV GUI_PASSWORD - to run with different password (default: dificult)
+```
