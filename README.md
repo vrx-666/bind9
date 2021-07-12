@@ -5,7 +5,7 @@ bind9
 bind9-tools
 bind9-dnssec
 perl
-webmin with bind module only
+webmin with bind module only (v1.979)
 
 ```
 Build docker by
