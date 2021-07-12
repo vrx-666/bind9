@@ -26,5 +26,7 @@ bind:
       - "10000:10000"    #webmin http
 ```
 For simpler use, You can do:
+```
     network_mode: host
+```
 instead "ports" directive
