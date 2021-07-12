@@ -1,7 +1,7 @@
 FROM alpine:latest
 
 LABEL maintainer="developer@s.vrx.pl"
-LABEL version="1.1"
+LABEL version="1.2"
 LABEL description="Bind with Webmin GUI."
 
 ENV WEBMIN_VER=1.979
@@ -37,11 +37,8 @@ COPY supervisord.conf /etc/supervisord.conf
 COPY startbind /usr/local/sbin/startbind
 COPY webmin.acl /etc/webmin/webmin.acl
 COPY named /etc/init.d/named
-COPY named.conf /data/bind/named.conf
 RUN  echo 'gotomodule=bind8' >> /etc/webmin/config && \
-     rm -rf /etc/webmin/status/services/nfs.serv && \
-     chown root:named /data/bind/named.conf && \
-     chmod 644 /data/bind/named.conf
+     rm -rf /etc/webmin/status/services/nfs.serv
 
 VOLUME ["/etc/bind"]
 
