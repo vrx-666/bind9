@@ -22,8 +22,8 @@ bind:
     environment:
       TZ: "Region/City"
     ports:
-      - "53:53"          #dns service
-      - "10000:10000"    #webmin http
+      - "53:53/udp"          #dns service
+      - "10000:10000/tcp"    #webmin http
 ```
 For simpler use, You can do:
 ```
