@@ -20,7 +20,10 @@ case "$1" in
 		pkill named
 		exit 0
 	fi
+<<<<<<< HEAD
 	;;
+=======
+>>>>>>> 5190655... Changes in webmin-bind module
   restart)
 	# Stop daemon
 	if [ -f /var/run/named/named.pid ]; then
@@ -40,6 +43,10 @@ case "$1" in
         /usr/sbin/named -4 -c /etc/bind/named.conf
         echo
         ;;
+<<<<<<< HEAD
+=======
+	fi
+>>>>>>> 5190655... Changes in webmin-bind module
 
   *)
         echo "Usage: named start"
