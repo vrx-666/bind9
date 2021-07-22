@@ -3001,7 +3001,7 @@ my $ex;
 if (&has_ndc() == 2) {
 	# Try with rndc
 	my $conf = $config{'rndc_conf'} && -r $config{'rndc_conf'} ?
-			" -c $config{'rndc_conf'}" : "";
+			" -k $config{'rndc_conf'}" : "";
 	$out = &backquote_logged(
 		$config{'rndc_cmd'}.$conf.
 		" ".$rndc_args." 2>&1 </dev/null");

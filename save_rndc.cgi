@@ -12,49 +12,33 @@ my $cfile = &make_chroot($config{'named_conf'});
 # Generate the RNDC config
 my ($out, $err);
 system("rndc-confgen -a");
-#if ($?) {
-#	&error("<pre>$err</pre>");
-#	}
 my $CONF;
-#&open_lock_tempfile($CONF, ">$config{'rndc_conf'}");
-#&print_tempfile($CONF, $out);
-#&close_tempfile($CONF);
-#&set_ownership_permissions(0, 0, 0600, $config{'rndc_conf'});
-#my $rconf = [ &read_config_file($config{'rndc_conf'}) ];
 
 # Get the new key
-#my $rkey = &find("key", $rconf);
-#$rkey || &error($text{'rndc_ekey'});
-#my $secret = &find_value("secret", $rkey->{'members'});
-#$secret || &error($text{'rndc_esecret'});
-#my $options = &find("options", $rconf);
 my $port;
-#if ($options) {
-#	$port = &find_value("default-port", $options->{'members'});
-#	}
 $port ||= 953;
-#my $algorithm = &find("algorithm", $rconf);
-#$algorithm ||= "hmac-md5";
 
 # Add the key to named.conf
 &lock_file($cfile);
+open (my $file_config_mod, '<', $cfile) or die "Can't open '$cfile' for read: $!";
+my @file_config_mod_lines;
+while (my $file_config_mod_line = <$file_config_mod>) {
+    push (@file_config_mod_lines, $file_config_mod_line);
+}
+close $file_config_mod or die "Cannot close $cfile: $!";
+
 my $parent = &get_config_parent();
 my $conf = &get_config();
-my @keys = &find("include", $conf);
-my ($key) = grep { $_->{'values'}->[0] eq "$config{'rndc_conf'}" } @keys;
-if (!$key) {
+my @keys = grep(/include/, $conf);
+my ($key) = grep { $_->{'values'}->[0] eq "include" } @keys;
+my @includes_in_config_mod = grep(/include/, @file_config_mod_lines);
+my $include_in_config_mod = grep(/rndc\.key/, @includes_in_config_mod);
+if ($include_in_config_mod == 0) {
 	# Need to include key
-	$key = { 'name' => 'include',
-		 'type' => 1,
-		 'values' => [ "$config{'rndc_conf'}" ]};
-#		 'members' => [ ] };
+	$key = { name => "include", values => [ "$config{'rndc_conf'}" ] };
 	push(@keys, $key);
+	&save_directive($parent, 'key', \@keys, 0);
 	}
-#&save_directive($key, "algorithm", [ { 'name' => 'algorithm',
-#			'values' => [ $algorithm ] } ], 1, 1);
-#&save_directive($key, "secret", [ { 'name' => 'secret',
-#			'values' => [ $secret ] } ], 1, 1);
-&save_directive($parent, 'key', \@keys, 0);
 
 # Make sure there is a control for the inet port
 my $controls = &find("controls", $conf);
@@ -79,10 +63,6 @@ if (!$inet) {
 else {
 	# Just make sure it is valid
 	my %keys = map { $_->{'name'}, 1 } @{$inet->{'members'}->{'keys'}};
-#	if (!$keys{'rndc-key'}) {
-#		push(@{$inet->{'members'}->{'keys'}},
-#		     { 'name' => "rndc-key" });
-#		}
 	}
 &save_directive($controls, 'inet', [ $inet ], 1);
 
