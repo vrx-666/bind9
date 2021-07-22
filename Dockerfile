@@ -6,7 +6,7 @@ LABEL description="Bind with Webmin GUI."
 
 ENV WEBMIN_VER=1.979
 ENV GUI_USER=${GUI_USER:-admin}
-ENV GUI_PASSWORD=${GUI_PASSWORD:-dificult}
+ENV GUI_PASSWORD=${GUI_PASSWORD:-difficult}
 ENV GUI_PORT=${GUI_PORT:-10000}
 
 RUN apk add --no-cache supervisor bind bind-tools perl perl-net-ssleay && \
@@ -30,15 +30,22 @@ RUN apk add --no-cache supervisor bind bind-tools perl perl-net-ssleay && \
     export nostart=1 && \
     sh /opt/webmin-${WEBMIN_VER}/setup.sh && \
     mkdir /data && \
+    rm /etc/bind/named.conf.authoritative && \
+    rm /etc/bind/named.conf.recursive && \
     mv /etc/bind /data/. && \
-    mkdir /etc/bind
+    mkdir /etc/bind && \
+    echo '' /etc/apk/repositories && \
+    echo 'gotomodule=bind8' >> /etc/webmin/config && \
+    sed -i 's/^rndc_conf=.*$/rndc_conf=\/etc\/bind\/rndc\.key/g' /etc/webmin/bind8/config && \
+    rm -rf /etc/webmin/status/services/nfs.serv
     
 COPY supervisord.conf /etc/supervisord.conf
 COPY startbind /usr/local/sbin/startbind
 COPY webmin.acl /etc/webmin/webmin.acl
+COPY bind8-lib.pl /opt/webmin/bind8/bind8-lib.pl
+COPY conf_rndc.cgi /opt/webmin/bind8/conf_rndc.cgi
+COPY save_rndc.cgi /opt/webmin/bind8/save_rndc.cgi
 COPY named /etc/init.d/named
-RUN  echo 'gotomodule=bind8' >> /etc/webmin/config && \
-     rm -rf /etc/webmin/status/services/nfs.serv
 
 VOLUME ["/etc/bind"]
 

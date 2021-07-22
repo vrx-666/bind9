@@ -3,53 +3,42 @@
 case "$1" in
   start)
         # Start daemon.
-	if [ -f /var/run/named/named.pid ]; then
+	if [ ! -z $(pgrep named|tail -1) ]; then
 		echo -n "Bind9 already running..."
 		echo
 		exit 0
 	fi
         echo -n "Starting named: "
-        /usr/sbin/named -4 -c /etc/bind/named.conf
+        /usr/sbin/named -4 -c /etc/bind/named.conf -L /var/log/supervisord.log
         echo
         ;;
   stop)
 	# Stop daemon
-	if [ -f /var/run/named/named.pid ]; then
+	if [ ! -z $(pgrep named|tail -1) ]; then
 		echo -n "Stoping named:"
 		echo
 		pkill named
 		exit 0
 	fi
-<<<<<<< HEAD
 	;;
-=======
->>>>>>> 5190655... Changes in webmin-bind module
-  restart)
-	# Stop daemon
-	if [ -f /var/run/named/named.pid ]; then
-		echo -n "Stoping named:"
+  status)
+	#Finding pid
+	if [ -z $(pgrep named|tail -1) ]; then
+		echo -n "Bind9 is not running..."
 		echo
-		pkill named
+		exit 0
+	elif [ ! -z $(pgrep named|tail -1) ]; then
+		echo -n "Bind9 is running... PID $(pgrep named|tail -1)"
+		echo
+		exit 0
 	else
-		echo -n "Bind9 not running...."
-	fi
-        # Start daemon.
-	if [ -f /var/run/named/named.pid ]; then
-		echo -n "Bind9 still running... not stopped properly"
+		echo -n "Status of Bind9 process is not known..."
 		echo
 		exit 1
 	fi
-        echo -n "Starting named: "
-        /usr/sbin/named -4 -c /etc/bind/named.conf
-        echo
         ;;
-<<<<<<< HEAD
-=======
-	fi
->>>>>>> 5190655... Changes in webmin-bind module
-
   *)
-        echo "Usage: named start"
+        echo "Usage: named start stop status"
         exit 1
 esac
 
