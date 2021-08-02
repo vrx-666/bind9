@@ -3,19 +3,19 @@
 case "$1" in
   start)
         # Start daemon.
-	if [ ! -z $(pgrep named|tail -1) ]; then
+	if [ ! -z $(pgrep /usr/sbin/named|tail -1) ]; then
 		echo -n "Bind9 already running..."
 		echo
 		exit 0
 	fi
         echo -n "Starting named: "
-        /usr/sbin/named -4 -c /etc/bind/named.conf -L /var/log/supervisord.log
+        /usr/sbin/named -4 -c /etc/bind/named.conf
         echo
         ;;
   stop)
 	# Stop daemon
-	if [ ! -z $(pgrep named|tail -1) ]; then
-		echo -n "Stoping named:"
+	if [ ! -z $(pgrep /usr/sbin/named|tail -1) ]; then
+		echo -n "Stoping named: $(pgrep /usr/sbin/named|tail -1)"
 		echo
 		pkill named
 		exit 0
@@ -23,12 +23,12 @@ case "$1" in
 	;;
   status)
 	#Finding pid
-	if [ -z $(pgrep named|tail -1) ]; then
+	if [ -z $(pgrep /usr/sbin/named|tail -1) ]; then
 		echo -n "Bind9 is not running..."
 		echo
 		exit 0
-	elif [ ! -z $(pgrep named|tail -1) ]; then
-		echo -n "Bind9 is running... PID $(pgrep named|tail -1)"
+	elif [ ! -z $(pgrep /usr/sbin/named|tail -1) ]; then
+		echo -n "Bind9 is running... PID $(pgrep /usr/sbin/named|tail -1)"
 		echo
 		exit 0
 	else

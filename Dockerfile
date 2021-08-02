@@ -33,7 +33,6 @@ RUN apk add --no-cache supervisor bind bind-tools perl perl-net-ssleay && \
     rm /etc/bind/named.conf.authoritative && \
     rm /etc/bind/named.conf.recursive && \
     mv /etc/bind /data/. && \
-    mkdir /etc/bind && \
     echo '' > /etc/apk/repositories && \
     echo 'gotomodule=bind8' >> /etc/webmin/config && \
     sed -i 's/^rndc_conf=.*$/rndc_conf=\/etc\/bind\/rndc\.key/g' /etc/webmin/bind8/config && \
@@ -51,4 +50,4 @@ VOLUME ["/etc/bind"]
 
 EXPOSE 53/udp 53/tcp 10000/tcp
 
-ENTRYPOINT ["startbind"]
+ENTRYPOINT /usr/local/sbin/startbind ${GUI_PASSWORD}
