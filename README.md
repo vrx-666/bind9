@@ -33,6 +33,5 @@ instead "ports" directive<br>
 <br>
 ENV Vars could be used:
 ```
-GUI_USER - run with different username to Webmin Panel (default: admin)
 GUI_PASSWORD - run with different password (default: difficult)
 ```
