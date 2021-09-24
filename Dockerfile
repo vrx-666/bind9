@@ -9,7 +9,7 @@ ENV GUI_USER=${GUI_USER:-admin}
 ENV GUI_PASSWORD=${GUI_PASSWORD:-difficult}
 ENV GUI_PORT=${GUI_PORT:-10000}
 
-RUN apk update && apk upgrade && apk add --no-cache supervisor bind bind-tools perl perl-net-ssleay && \
+RUN apk update && apk upgrade && apk add --no-cache tzdata supervisor bind bind-tools perl perl-net-ssleay && \
     wget -q http://prdownloads.sourceforge.net/webadmin/webmin-${WEBMIN_VER}.tar.gz -O /opt/webmin.tar.gz && \
     tar xf /opt/webmin.tar.gz -C /opt && \
     rm -rf /opt/webmin.tar.gz && \
