@@ -10,7 +10,9 @@ if [ $? != 0 ];then
 	rm /var/run/webmin/miniserv.pid
 	/usr/bin/perl /opt/webmin/miniserv.pl /etc/webmin/miniserv.conf
 fi
-if [ $1 != "" ];then
-	/opt/webmin/changepass.pl /etc/webmin admin $1 > /dev/null
-fi
+prev_username=$(cat /opt/user.name)
+sed -i "s/$prev_username:/${GUI_USER}:/g" /etc/webmin/miniserv.users
+sed -i "s/$prev_username:/${GUI_USER}:/g" /etc/webmin/webmin.acl
+sed -i "s/$prev_username/${GUI_USER}/g" /opt/user.name
+/opt/webmin/changepass.pl /etc/webmin ${GUI_USER} ${GUI_PASSWORD} > /dev/null
 /usr/bin/supervisord -n -c /etc/supervisord.conf
