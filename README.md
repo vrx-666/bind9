@@ -31,7 +31,10 @@ For simpler use, You can do:
 ```
 instead "ports" directive<br>
 <br>
-ENV Vars could be used:
+ENV's:
 ```
+TZ - set Your timezone
+GUI_USER - run with different user (default: admin)
 GUI_PASSWORD - run with different password (default: difficult)
+IPV6 - enable/disable ipv6 (default: disable)
 ```
