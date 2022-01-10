@@ -1310,16 +1310,16 @@ elsif ($type eq "NSEC3PARAM") {
 	}
 elsif ($type eq "CAA") {
 	# CAA records have a flag, tag and issuer domain
-	print &ui_table_row($text{'value_CAA0'},
+	print &ui_table_row($text{'value_CAA1'},
 		&ui_yesno_radio("value0", $v[0] || 0));
 
-	print &ui_table_row($text{'value_CAA1'},
+	print &ui_table_row($text{'value_CAA2'},
 		&ui_select("value1", $v[1],
 			   [ [ "issue", $text{'value_caa_issue'} ],
 			     [ "issuewild", $text{'value_caa_issuewild'} ],
 			     [ "iodef", $text{'value_caa_iodef'} ] ]));
 
-	print &ui_table_row($text{'value_CAA2'},
+	print &ui_table_row($text{'value_CAA3'},
 		&ui_textbox("value2", $v[2], 40));
 	}
 else {
@@ -2408,7 +2408,8 @@ foreach my $k (keys %znc) {
 			}
 		}
 	}
-if ($changed || $znc{'version'} != $zone_names_version ||
+if ($changed || !$znc{'version'} ||
+    $znc{'version'} != $zone_names_version ||
     int($config{'no_chroot'}) != int($znc{'no_chroot_config'}) ||
     $config{'pid_file'} ne $znc{'pidfile_config'}) {
 	# Yes .. need to rebuild
@@ -3223,8 +3224,8 @@ return $bind_major > 9 ? 2 :
 sub dnssec_size_range
 {
 my ($alg) = @_;
-return $alg eq 'RSAMD5' || $alg eq 'RSASHA1' ||
-	$alg eq 'RSASHA256' ? ( 512, 2048 ) :
+return $alg eq 'RSASHA256' ? ( 2048, 4096 ) :
+       $alg eq 'RSAMD5' || $alg eq 'RSASHA1' ? ( 512, 2048 ) :
        $alg eq 'DH' ? ( 128, 4096 ) :
        $alg eq 'DSA' ? ( 512, 1024, 64 ) :
        $alg eq 'HMAC-MD5' ? ( 1, 512 ) :
@@ -4209,8 +4210,8 @@ return undef if (!$en || $en !~ /yes/i);
 my $tkeys = &find("trusted-keys", $conf);
 return undef if (!$tkeys || !@{$tkeys->{'members'}});
 return &text('trusted_warning',
-	     $gconfig{'webprefix'}.'/bind8/conf_trusted.cgi')."<p>\n".
-       &ui_form_start($gconfig{'webprefix'}.'/bind8/fix_trusted.cgi')."\n".
+	     &get_webprefix().'/bind8/conf_trusted.cgi')."<p>\n".
+       &ui_form_start(&get_webprefix().'/bind8/fix_trusted.cgi')."\n".
        &ui_form_end([ [ undef, $text{'trusted_fix'} ] ]);
 }
 
