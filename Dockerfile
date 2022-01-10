@@ -1,7 +1,7 @@
-FROM alpine:3.14.1
+FROM alpine:3.15
 
 LABEL maintainer="developer@s.vrx.pl"
-LABEL version="1.2"
+LABEL version="1.3"
 LABEL description="Bind with Webmin GUI."
 
 ENV WEBMIN_VER=1.979
