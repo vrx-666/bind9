@@ -52,3 +52,4 @@ VOLUME ["/etc/bind"]
 EXPOSE 53/udp 53/tcp 10000/tcp
 
 ENTRYPOINT ["startbind"]
+CMD ["supervisord","-n","-c","/etc/supervisord.conf"]
