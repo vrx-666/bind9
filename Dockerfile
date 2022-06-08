@@ -37,6 +37,7 @@ RUN apk update && apk upgrade && apk add --no-cache tzdata supervisor bind bind-
     echo '' > /etc/apk/repositories && \
     echo 'gotomodule=bind8' >> /etc/webmin/config && \
     sed -i 's/^rndc_conf=.*$/rndc_conf=\/etc\/bind\/rndc\.key/g' /etc/webmin/bind8/config && \
+    echo "file_owner=root:users" >> /etc/webmin/bind8/config && \
     rm -rf /etc/webmin/status/services/nfs.serv
     
 COPY supervisord.conf /etc/supervisord.conf

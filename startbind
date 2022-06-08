@@ -1,8 +1,12 @@
 #!/bin/sh
 if [ ! -d /etc/bind ];then
 	cp -R -p /data/bind /etc/.
-	chown root:named /etc/bind
+	chown -f root:named /etc/bind
+	chmod 777 /etc/bind
 	rm /etc/bind/rndc.key
+else
+	chmod 777 /etc/bind
+	chown -f root:users /etc/bind/*
 fi
 /usr/bin/perl /opt/webmin/miniserv.pl /etc/webmin/miniserv.conf
 if [ $? != 0 ];then
