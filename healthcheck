@@ -1,0 +1,26 @@
+#!/bin/sh
+
+health=0
+named_conf="/etc/bind/named.conf"
+named_pid="/run/named/named.pid"
+
+if [ -f $named_pid ];then
+	npid=$(cat $named_pid)
+	ncheck=$(ps aux | grep $npid |grep -v grep| wc -l)
+	if [ "$npid" != "" ] && [ "$ncheck" != "0" ] && [ -f $named_conf ];then
+		health=$((health+1))
+	fi
+elif [ ! -f $named_conf ]; then
+	health=$((health+1))
+fi
+
+wproc=$(ps aux | grep [m]iniserv.pl | wc -l)
+if [ "$wproc" != "0" ];then
+	health=$((health+2))
+fi
+
+if [ "$health" == 3 ];then
+	exit 0
+else
+	exit 1
+fi

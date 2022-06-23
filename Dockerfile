@@ -47,10 +47,14 @@ COPY bind8-lib.pl /opt/webmin/bind8/bind8-lib.pl
 COPY conf_rndc.cgi /opt/webmin/bind8/conf_rndc.cgi
 COPY save_rndc.cgi /opt/webmin/bind8/save_rndc.cgi
 COPY named /etc/init.d/named
+COPY healthcheck /usr/local/bin/healthcheck
 
 VOLUME ["/etc/bind"]
 
 EXPOSE 53/udp 53/tcp 10000/tcp
+
+HEALTHCHECK --interval=60s --timeout=60s --start-period=60s \
+    CMD healthcheck
 
 ENTRYPOINT ["startbind"]
 CMD ["supervisord","-n","-c","/etc/supervisord.conf"]
