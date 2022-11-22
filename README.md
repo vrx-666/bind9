@@ -1,5 +1,5 @@
 # Bind9
-From alpine-linux dockerized bind9 with Webmin GUI.<br>
+From alpine-linux dockerized bind9 with Webmin GUI<br>
 ```
 bind9
 bind9-tools
