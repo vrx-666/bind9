@@ -21,4 +21,12 @@ sed -i "s/$prev_username/${GUI_USER}/g" /opt/user.name
 /opt/webmin/changepass.pl /etc/webmin ${GUI_USER} ${GUI_PASSWORD} > /dev/null
 if [ "${IPV6}" == "enable" ]; then sed -i "s/named -4 -c/named -c/g" /etc/supervisord.conf; fi
 if [ "${IPV6}" == "disable" ]; then sed -i "s/named -c/named -4 -c/g" /etc/supervisord.conf; fi
+if [ "${EXTEND_LOGGING}" == "true" ];then
+	sed -i "s/^;stdout/stdout/g" /etc/supervisord.conf
+	sed -i "s/^;stderr/stderr/g" /etc/supervisord.conf
+fi
+if [ "${EXTEND_LOGGING}" == "false" ];then
+	sed -i "s/^stdout/;stdout/g" /etc/supervisord.conf
+	sed -i "s/^stderr/;stderr/g" /etc/supervisord.conf
+fi
 exec "$@"

@@ -1,4 +1,4 @@
-FROM alpine:3.15
+FROM alpine:3.19
 
 LABEL maintainer="developer@s.vrx.pl"
 LABEL version="1.3"
@@ -8,6 +8,7 @@ ENV WEBMIN_VER=1.994
 ENV GUI_USER=${GUI_USER:-admin}
 ENV GUI_PASSWORD=${GUI_PASSWORD:-difficult}
 ENV GUI_PORT=${GUI_PORT:-10000}
+ENV EXTEND_LOGGING=${EXTEND_LOGGING:-false}
 
 RUN apk update && apk upgrade && apk add --no-cache tzdata openssl perl-socket6 supervisor bind bind-tools perl perl-net-ssleay && \
     wget -q http://prdownloads.sourceforge.net/webadmin/webmin-${WEBMIN_VER}.tar.gz -O /opt/webmin.tar.gz && \
