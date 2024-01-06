@@ -37,4 +37,5 @@ TZ - set Your timezone
 GUI_USER - run with different user (default: admin)
 GUI_PASSWORD - run with different password (default: difficult)
 IPV6 - enable/disable ipv6 (default: disable)
+EXTEND_LOGGING - true/false for extended logging (default: false) #when true there is a possibility to define logging {} in bind config
 ```
