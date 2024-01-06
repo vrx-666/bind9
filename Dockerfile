@@ -4,7 +4,7 @@ LABEL maintainer="developer@s.vrx.pl"
 LABEL version="1.3"
 LABEL description="Bind with Webmin GUI."
 
-ENV WEBMIN_VER=1.984
+ENV WEBMIN_VER=1.994
 ENV GUI_USER=${GUI_USER:-admin}
 ENV GUI_PASSWORD=${GUI_PASSWORD:-difficult}
 ENV GUI_PORT=${GUI_PORT:-10000}
