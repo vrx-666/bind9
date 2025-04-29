@@ -29,4 +29,24 @@ if [ "${EXTEND_LOGGING}" == "false" ];then
 	sed -i "s/^stdout/;stdout/g" /etc/supervisord.conf
 	sed -i "s/^stderr/;stderr/g" /etc/supervisord.conf
 fi
+if [ -f /etc/bind/rndc.key ];then
+	check_include=$(grep 'include\s\+"/etc/bind/rndc.key"' /etc/bind/named.conf | wc -l)
+	if [ $check_include -gt 0 ];then
+		check_rndc1=$(grep 'default-key\s\+"rndc-key"' /etc/bind/rndc.key | wc -l)
+		if [ $check_rndc1 -lt 1 ];then
+			check_rndc2=$(grep 'default-server\s\+"127.0.0.1"' /etc/bind/rndc.key | wc -l)
+			if [ $check_rndc2 -lt 1 ];then
+				cat /etc/bind/rndc.key >> /etc/bind/named.conf
+				sed -i '/include\s\+"\/etc\/bind\/rndc\.key"/d' /etc/bind/named.conf
+				cat >> /etc/bind/rndc.key <<EOF
+options {
+        default-key "rndc-key";
+        default-server 127.0.0.1;
+        default-port 953;
+};
+EOF
+			fi
+		fi
+	fi
+fi
 exec "$@"

@@ -1,10 +1,10 @@
-FROM alpine:3.19
+FROM alpine:3.21
 
 LABEL maintainer="developer@s.vrx.pl"
-LABEL version="1.4"
+LABEL version="2.0"
 LABEL description="Bind with Webmin GUI."
 
-ENV WEBMIN_VER=1.994
+ENV WEBMIN_VER=2.303
 ENV GUI_USER=${GUI_USER:-admin}
 ENV GUI_PASSWORD=${GUI_PASSWORD:-difficult}
 ENV GUI_PORT=${GUI_PORT:-10000}
@@ -40,14 +40,12 @@ RUN apk update && apk upgrade && apk add --no-cache tzdata openssl perl-socket6 
     echo 'gotomodule=bind8' >> /etc/webmin/config && \
     sed -i 's/^rndc_conf=.*$/rndc_conf=\/etc\/bind\/rndc\.key/g' /etc/webmin/bind8/config && \
     echo "file_owner=root:users" >> /etc/webmin/bind8/config && \
+    mkdir /etc/init.d && \
     rm -rf /etc/webmin/status/services/nfs.serv
     
 COPY supervisord.conf /etc/supervisord.conf
-COPY startbind /usr/local/sbin/startbind
+COPY startbind /usr/local/bin/startbind
 COPY webmin.acl /etc/webmin/webmin.acl
-COPY bind8-lib.pl /opt/webmin/bind8/bind8-lib.pl
-COPY conf_rndc.cgi /opt/webmin/bind8/conf_rndc.cgi
-COPY save_rndc.cgi /opt/webmin/bind8/save_rndc.cgi
 COPY named /etc/init.d/named
 COPY healthcheck /usr/local/bin/healthcheck
 
