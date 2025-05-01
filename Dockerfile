@@ -1,7 +1,7 @@
 FROM alpine:3.21
 
 LABEL maintainer="developer@s.vrx.pl"
-LABEL version="2.0"
+LABEL version="2.1"
 LABEL description="Bind with Webmin GUI."
 
 ENV WEBMIN_VER=2.303
@@ -44,8 +44,9 @@ RUN apk update && apk upgrade && apk add --no-cache tzdata openssl perl-socket6 
     rm -rf /etc/webmin/status/services/nfs.serv
     
 COPY supervisord.conf /etc/supervisord.conf
-COPY startbind /usr/local/bin/startbind
-COPY webmin.acl /etc/webmin/webmin.acl
+COPY bind /usr/local/include/bind
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN  echo "admin: acl bind8 bsdexports bsdfdisk dfsadmin format hpuxexports ipfilter ipfw nis package-updates proc rbac sendmail servers sgiexports smf status system-status time webmin webmincron webminlog zones" > /etc/webmin/webmin.acl
 COPY named /etc/init.d/named
 COPY healthcheck /usr/local/bin/healthcheck
 
@@ -56,5 +57,5 @@ EXPOSE 53/udp 53/tcp 10000/tcp
 HEALTHCHECK --interval=60s --timeout=60s --start-period=60s \
     CMD healthcheck
 
-ENTRYPOINT ["startbind"]
+ENTRYPOINT ["entrypoint.sh"]
 CMD ["supervisord","-n","-c","/etc/supervisord.conf"]
