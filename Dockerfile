@@ -1,4 +1,5 @@
-FROM alpine:3.21
+ARG ARCH=
+FROM ${ARCH}alpine:3.21
 
 LABEL maintainer="developer@s.vrx.pl"
 LABEL version="2.1"
@@ -32,9 +33,7 @@ RUN apk update && apk upgrade && apk add --no-cache tzdata openssl perl-socket6 
     export nostart=1 && \
     sh /opt/webmin-${WEBMIN_VER}/setup.sh && \
     mkdir /data && \
-    rm /etc/bind/named.conf.authoritative && \
-    rm /etc/bind/named.conf.recursive && \
-    mv /etc/bind /data/. && \
+    rm -rf /etc/bind/* && \
     echo "${GUI_USER}" > /opt/user.name && \
     echo '' > /etc/apk/repositories && \
     echo 'gotomodule=bind8' >> /etc/webmin/config && \
