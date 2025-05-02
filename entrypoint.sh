@@ -7,7 +7,7 @@ else
 	prepare_config_dir
 fi
 
-if [ ! -s /etc/bin/bind.keys ];then
+if [ ! -s /etc/bind/bind.keys ];then
 	bind_keys
 fi
 
