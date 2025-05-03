@@ -1,0 +1,68 @@
+#!/bin/sh
+function prepare_config_dir {
+	chmod 777 /etc/bind
+	chown -f root:users /etc/bind/* 2> /dev/null
+}
+function do_config_dir {
+	mkdir /etc/bind
+	prepare_config_dir
+}
+function bind_keys {
+	ln -s /usr/share/dnssec-root/bind-dnssec-root.keys /etc/bind/bind.keys
+}
+function start_webmin {
+	/usr/bin/perl /opt/webmin/miniserv.pl /etc/webmin/miniserv.conf
+}
+function restart_webmin {
+	pkill perl
+	rm /var/run/webmin/miniserv.pid
+	/usr/bin/perl /opt/webmin/miniserv.pl /etc/webmin/miniserv.conf
+}
+function change_username {
+	prev_username=$(cat /opt/user.name)
+	sed -i "s/$prev_username:/${GUI_USER}:/g" /etc/webmin/miniserv.users
+	sed -i "s/$prev_username:/${GUI_USER}:/g" /etc/webmin/webmin.acl
+	sed -i "s/$prev_username/${GUI_USER}/g" /opt/user.name
+}
+function update_password {
+	/opt/webmin/changepass.pl /etc/webmin ${GUI_USER} ${GUI_PASSWORD} > /dev/null
+}
+function enable_ipv6 {
+	sed -i "s/named -4 -c/named -c/g" /etc/supervisord.conf
+}
+function disable_ipv6 {
+	sed -i "s/named -c/named -4 -c/g" /etc/supervisord.conf
+}
+function enable_extended_logging {
+	sed -i "s/^;stdout/stdout/g" /etc/supervisord.conf
+	sed -i "s/^;stderr/stderr/g" /etc/supervisord.conf
+}
+function disable_extended_logging {
+	sed -i "s/^stdout/;stdout/g" /etc/supervisord.conf
+	sed -i "s/^stderr/;stderr/g" /etc/supervisord.conf
+}
+function update_rndc_key {
+	cat /etc/bind/rndc.key >> /etc/bind/named.conf
+	sed -i '/include\s\+"\/etc\/bind\/rndc\.key"/d' /etc/bind/named.conf
+	cat >> /etc/bind/rndc.key <<EOF
+options {
+        default-key "rndc-key";
+        default-server 127.0.0.1;
+        default-port 953;
+};
+EOF
+}
+function check_rndc_key {
+	if [ -f /etc/bind/rndc.key ];then
+		check_include=$(grep 'include\s\+"/etc/bind/rndc.key"' /etc/bind/named.conf | wc -l)
+		if [ $check_include -gt 0 ];then
+			check_rndc1=$(grep 'default-key\s\+"rndc-key"' /etc/bind/rndc.key | wc -l)
+			if [ $check_rndc1 -lt 1 ];then
+				check_rndc2=$(grep 'default-server\s\+"127.0.0.1"' /etc/bind/rndc.key | wc -l)
+				if [ $check_rndc2 -lt 1 ];then
+					update_rndc_key
+				fi
+			fi
+		fi
+	fi
+}
