@@ -1,9 +1,12 @@
 ARG ARCH=
 FROM ${ARCH}alpine:3.21
 
+ARG VERSION=dev
 LABEL maintainer="developer@s.vrx.pl"
-LABEL version="2.1"
+LABEL version="${VERSION}"
 LABEL description="Bind with Webmin GUI."
+LABEL org.opencontainers.image.source="https://github.com/vrx-666/bind9"
+LABEL org.opencontainers.image.description="BIND9 DNS server with stripped-down Webmin GUI"
 
 ENV WEBMIN_VER=2.303
 ENV GUI_USER=admin

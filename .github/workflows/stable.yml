@@ -6,9 +6,11 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: vrx-666/bind9
+  DOCKERHUB_IMAGE: pwa666/bind9
 
 jobs:
   build:
+    if: github.repository == 'vrx-666/bind9'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -17,6 +19,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # potrzebna pełna historia do liczenia patcha
+
+      - name: Compute version
+        id: ver
+        run: |
+          SEED=$(cat VERSION)               # np. 2.1.8
+          MAJOR_MINOR=${SEED%.*}            # 2.1
+          PATCH_START=${SEED##*.}           # 8
+          BASE_COMMIT=$(git log -1 --format=%H -- VERSION)   # ostatnia zmiana VERSION
+          COMMITS=$(git rev-list --count "${BASE_COMMIT}..HEAD")
+          PATCH=$((PATCH_START + COMMITS))
+          echo "version=${MAJOR_MINOR}.${PATCH}" >> "$GITHUB_OUTPUT"
+          echo "tag=v${MAJOR_MINOR}.${PATCH}" >> "$GITHUB_OUTPUT"
+          echo "Resolved version: v${MAJOR_MINOR}.${PATCH}"
 
       - name: Auth GitHub Container Registry
         uses: docker/login-action@v3
@@ -25,11 +42,23 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Auth Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: pwa666
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Build and push Docker Image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
+          build-args: |
+            VERSION=${{ steps.ver.outputs.version }}
           tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.ver.outputs.tag }}
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:stable
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+            docker.io/${{ env.DOCKERHUB_IMAGE }}:${{ steps.ver.outputs.tag }}
+            docker.io/${{ env.DOCKERHUB_IMAGE }}:stable
+            docker.io/${{ env.DOCKERHUB_IMAGE }}:latest
