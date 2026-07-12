@@ -54,7 +54,7 @@ COPY healthcheck /usr/local/bin/healthcheck
 
 VOLUME ["/etc/bind"]
 
-EXPOSE 53/udp 53/tcp 10000/tcp
+EXPOSE 53/udp 53/tcp ${GUI_PORT}/tcp
 
 HEALTHCHECK --interval=60s --timeout=60s --start-period=60s \
     CMD healthcheck
