@@ -3,6 +3,14 @@ on:
   push:
     branches:
       - master
+    # Don't rebuild+republish stable for changes that never affect the image
+    # (CI workflows, gitignore, docs). A push is skipped only when ALL of its
+    # changed files match these globs, so a Dockerfile/VERSION change still
+    # triggers a release.
+    paths-ignore:
+      - '.github/**'
+      - '.gitignore'
+      - 'README.md'
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: vrx-666/bind9
